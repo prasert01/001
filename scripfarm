@@ -1,6 +1,6 @@
 getgenv().autofarm = true
 speed = 180
-Distance = 2
+Distance = 20
 function tween(target)
     local target = pcall(function() return target.CFrame end) and target.CFrame or target
     game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(game.Players.LocalPlayer:DistanceFromCharacter(target.Position)/speed, Enum.EasingStyle.Linear), {CFrame = target*CFrame.new(0,0,Distance)}):Play()
@@ -52,6 +52,9 @@ spawn(function()
             wait()
             game:GetService("VirtualInputManager"):SendKeyEvent(true, 114, false, game)
             game:GetService("VirtualInputManager"):SendKeyEvent(false, 114, false, game)
+            wait()
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, 32, false, game)
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, 32, false, game)
         end
     end
 end)
