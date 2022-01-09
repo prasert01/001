@@ -46,6 +46,12 @@ spawn(function()
             wait()
             game:GetService("VirtualInputManager"):SendKeyEvent(true, 52, false, game)
             game:GetService("VirtualInputManager"):SendKeyEvent(false, 52, false, game)
+            wait()
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, 101, false, game)
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, 101, false, game)
+            wait()
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, 114, false, game)
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, 114, false, game)
         end
     end
 end)
