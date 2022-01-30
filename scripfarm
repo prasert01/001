@@ -1,6 +1,3 @@
-if not game:IsLoaded() then
-game.Loaded:Wait()
-end
 getgenv().autofarm = true
 speed = 100
 Distance = 3
