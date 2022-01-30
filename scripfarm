@@ -1,3 +1,6 @@
+if not game:IsLoaded() then
+game.Loaded:Wait()
+end
 getgenv().autofarm = true
 speed = 100
 Distance = 3
@@ -52,9 +55,6 @@ spawn(function()
             wait()
             game:GetService("VirtualInputManager"):SendKeyEvent(true, 114, false, game)
             game:GetService("VirtualInputManager"):SendKeyEvent(false, 114, false, game)
-            wait()
-            game:GetService("VirtualInputManager"):SendKeyEvent(true, 32, false, game)
-            game:GetService("VirtualInputManager"):SendKeyEvent(false, 32, false, game)
         end
     end
 end)
