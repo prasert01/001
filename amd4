@@ -1,0 +1,367 @@
+if game.GameId == 2655311011 then
+
+    repeat wait() until game:IsLoaded()
+
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+    end)
+
+    _G.Settings = {
+        MapName =       "Titan Dimension";
+        Difficulty =    "Easy";
+        Hardcore =      false;
+        FriendsOnly =   false;
+        AutoFarm =      false;
+        AutoRetry =     false;
+        AutoSkill =     false;
+        Distance =      0;
+        Speed =         69;
+    }
+
+    local foldername = "prasert"
+    local filename = "AnimeDimension2.lua"
+     
+    function saveSettings()
+        local HttpService,json = game:GetService("HttpService")
+        if (writefile) then
+            if isfolder(foldername) then
+                json = HttpService:JSONEncode(_G.Settings)
+                writefile(foldername.."\\"..filename, json)
+            else
+                makefolder(foldername)
+                writefile(foldername.."\\"..filename, json)
+            end
+        end
+    end
+     
+    function loadSettings()
+        local HttpService = game:GetService("HttpService")
+        if isfile(foldername.."\\"..filename) then
+            _G.Settings = HttpService:JSONDecode(readfile(foldername.."\\"..filename))
+        end
+    end
+     
+    loadSettings()
+
+    local MapList = {
+        "Infinite Mode";
+        "Titan Dimension";
+        "Demon Dimension";
+        "Curse Dimension";
+        "Villain Dimension";
+        "Sword Dimension";
+        "Ghoul Dimension";
+        "Fate Dimension";
+		"Demon Lord Raid";
+		"Tengoku Raid";
+		"Hirito Raid";
+		"Titan Raid"
+    }
+
+    local MapDifficulty = {
+        "Infinite";
+        "Easy";
+        "Hard";
+        "Nightmare";
+    }
+
+    local keys = {
+        "One";
+        "Two";
+        "Three";
+        "Four";
+        "E";
+        "R"
+    }
+
+    function tween(Enemy)
+        local plr,tp = game.Players.LocalPlayer.Character.HumanoidRootPart
+        
+        if _G.Settings.Distance >= 1 then
+            tp = {CFrame = Enemy.CFrame * CFrame.new(0,_G.Settings.Distance,0) * CFrame.Angles(math.rad(-90),0,0)}
+        elseif _G.Settings.Distance <= 0 then
+            tp = {CFrame = Enemy.CFrame * CFrame.new(0,_G.Settings.Distance,0) * CFrame.Angles(math.rad(90),0,0)}
+        end
+        
+
+        local ts = game:GetService("TweenService"):Create(plr, TweenInfo.new((plr.Position - Enemy.Position).magnitude/_G.Settings.Speed, Enum.EasingStyle.Linear), tp)
+        ts:Play()
+    end
+
+    function click()
+        local hrp = game.Players.LocalPlayer.Character.HumanoidRootPart
+        game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent:FireServer("UseSkill",{["hrpCFrame"] = hrp.CFrame,["attackNumber"] = 1},"BasicAttack")
+    end
+
+    function startGame()
+        task.spawn(function()
+            local args = {"CreateRoom",{["Difficulty"] = _G.Settings.Difficulty,["FriendsOnly"] = _G.Settings.FriendsOnly,["MapName"] = _G.Settings.MapName,["Hardcore"] = _G.Settings.Hardcore}}
+            game:GetService("ReplicatedStorage").RemoteFunctions.MainRemoteFunction:InvokeServer(unpack(args))
+            wait()
+            game:GetService("ReplicatedStorage").RemoteFunctions.MainRemoteFunction:InvokeServer("TeleportPlayers")
+        end)
+    end 
+    
+    function noclip()
+        for i, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if v:IsA("BasePart") and v.CanCollide == true then
+                v.CanCollide = false
+            end
+        end
+    end
+
+    game:GetService("RunService").Stepped:Connect(function()
+        if _G.Settings.AutoFarm then
+            noclip()
+            game.Players.LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,0,0)
+        end
+    end)
+
+    local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/uzu01/lua/main/ui/uwuware.lua"))()
+    local window = library:CreateWindow("เกมส์ Anime Dimension")
+    local FarmingFolder = window:AddFolder("ฟาร์ม")
+    local SettingFolder = window:AddFolder("คั้งค่า")
+    local CreditsFolder = window:AddFolder("เคร์ดิต")
+
+    FarmingFolder:AddToggle({
+        text = "เปิด ออโต้ฟาร๋ม", 
+        state = _G.Settings.AutoFarm,
+        callback = function(a) 
+            _G.Settings.AutoFarm = a
+            saveSettings()
+            startGame()
+        end 
+    })
+
+    task.spawn(function()
+        while task.wait() do
+            pcall(function()
+                if _G.Settings.AutoFarm then
+                    for i, v in pairs(game:GetService("Workspace").Folders.Monsters:GetChildren()) do 
+                        if v.EnemyHealthBarGui then
+                            repeat task.wait() 
+                                tween(v.HumanoidRootPart);click()
+                            until v.EnemyHealthBarGui == nil or not _G.Settings.AutoFarm
+                        end
+                    end
+                end
+            end)
+        end
+    end)
+
+    SettingFolder:AddList({
+        text = "เลือก ด่าน", 
+        value = _G.Settings.MapName,
+        values = MapList, 
+        callback = function(a) 
+            _G.Settings.MapName = a
+            saveSettings() 
+        end
+    })  
+
+    SettingFolder:AddList({
+        text = " เลือก ความยาก", 
+        value = _G.Settings.Difficulty,
+        values = MapDifficulty, 
+        callback = function(a) 
+            _G.Settings.Difficulty = a
+            saveSettings() 
+        end
+    })
+
+    SettingFolder:AddToggle({
+        text = "เฉพาะเพื่อนเท่านั้น", 
+        state = _G.Settings.FriendsOnly,
+        callback = function(a) 
+            _G.Settings.FriendsOnly = a
+            saveSettings()
+        end
+    })
+
+    SettingFolder:AddToggle({
+        text = "โหมดฮาดคอ", 
+        state = _G.Settings.Hardcore,
+        callback = function(a) 
+            _G.Settings.Hardcore = a
+            saveSettings()
+        end
+    })
+
+    SettingFolder:AddToggle({
+        text = "ออโต้ ด่าน", 
+        state = _G.Settings.AutoRetry,
+        callback = function(a) 
+            _G.Settings.AutoRetry = a
+            saveSettings()
+          
+            task.spawn(function()
+                while task.wait() do
+                    if not _G.Settings.AutoRetry then break end
+                    game:GetService("ReplicatedStorage").RemoteEvents.MainRemoteEvent:FireServer("RetryDungeon")
+                end
+            end)
+        end
+    })
+
+    SettingFolder:AddToggle({
+        text = "ออโต้สกิล", 
+        state = _G.Settings.AutoSkill,
+        callback = function(a) 
+            _G.Settings.AutoSkill = a
+            saveSettings()
+
+            task.spawn(function()
+                while task.wait(.5) do
+                    if not _G.Settings.AutoSkill then break end
+                    for i, v in pairs(keys) do
+                        task.spawn(function()
+                            game:GetService('VirtualInputManager'):SendKeyEvent(true, v, false, game) 
+                        end)
+                    end
+                end
+            end)
+        end
+    })
+
+    SettingFolder:AddSlider({
+        text = "ระยะห่าง",
+        value = _G.Settings.Distance,
+        min = -10, 
+        max = 10, 
+        callback = function(a) 
+            _G.Settings.Distance = a 
+            saveSettings()
+        end
+    })
+
+    SettingFolder:AddSlider({
+        text = "ความเร็ว",
+        value = _G.Settings.Speed,
+        min = 10, 
+        max = 150, 
+        callback = function(a) 
+            _G.Settings.Speed = a 
+            saveSettings()
+        end
+    })
+
+    CreditsFolder:AddBind({
+        text = "เลือกวิธีเปิด-ปิด", 
+        key = "LeftControl", 
+        callback = function() 
+            library:Close()
+        end
+    })
+
+    CreditsFolder:AddButton({
+        text = "Script by ประเสริฐ ม่อน",
+        callback = function()
+            print("asd")
+        end
+    })
+
+    CreditsFolder:AddButton({
+        text = "COPYLINK FACEBOOK",
+        callback = function()
+            setclipboard("https://www.facebook.com/Khunmons")
+        end
+    })
+    
+    library:Init()
+
+end
+
+local Rice = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local Credits = Instance.new("TextLabel")
+local Activate = Instance.new("TextButton")
+local UICorner = Instance.new("UICorner")
+local OpenClose = Instance.new("TextButton")
+local UICorner_2 = Instance.new("UICorner")
+
+Rice.Name = "Rice"
+Rice.Parent = game.CoreGui
+Rice.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+Main.Name = "Main"
+Main.Parent = Rice
+Main.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Main.BorderSizePixel = 0
+Main.Position = UDim2.new(0.321207851, 0, 0.409807354, 0)
+Main.Size = UDim2.new(0, 295, 0, 116)
+Main.Visible = false
+Main.Active = true
+Main.Draggable =  true
+
+Title.Name = "Title"
+Title.Parent = Main
+Title.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Title.BorderSizePixel = 0
+Title.Size = UDim2.new(0, 295, 0, 16)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "ประเสริฐ Anti-Afk"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.TextSize = 12.000
+Title.TextWrapped = true
+
+Credits.Name = "Credits"
+Credits.Parent = Main
+Credits.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Credits.BorderSizePixel = 0
+Credits.Position = UDim2.new(0, 0, 0.861901641, 0)
+Credits.Size = UDim2.new(0, 295, 0, 16)
+Credits.Font = Enum.Font.GothamBold
+Credits.Text = "Credit By ประเสริฐ ม่อน"
+Credits.TextColor3 = Color3.fromRGB(255, 255, 255)
+Credits.TextScaled = true
+Credits.TextSize = 12.000
+Credits.TextWrapped = true
+
+Activate.Name = "Activate"
+Activate.Parent = Main
+Activate.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Activate.BorderColor3 = Color3.fromRGB(27, 42, 53)
+Activate.BorderSizePixel = 0
+Activate.Position = UDim2.new(0.0330629945, 0, 0.243326917, 0)
+Activate.Size = UDim2.new(0, 274, 0, 59)
+Activate.Font = Enum.Font.GothamBold
+Activate.Text = "กดเพื่อเปิดใช้งาน"
+Activate.TextColor3 = Color3.fromRGB(0, 255, 127)
+Activate.TextSize = 43.000
+Activate.TextStrokeColor3 = Color3.fromRGB(102, 255, 115)
+Activate.MouseButton1Down:connect(function()
+	local vu = game:GetService("VirtualUser")
+	game:GetService("Players").LocalPlayer.Idled:connect(function()
+		vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+		wait(1)
+		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	end)
+end)
+
+
+UICorner.Parent = Activate
+
+OpenClose.Name = "Open/Close"
+OpenClose.Parent = Rice
+OpenClose.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+OpenClose.Position = UDim2.new(0.283924811, 0, 0.0, 0)
+OpenClose.Size = UDim2.new(0, 247, 0, 35)
+OpenClose.Font = Enum.Font.GothamBold
+OpenClose.Text = "เปิด/ปิด หน้าจอ ระบบป้องกัน เด้งออกจากเกมส์"
+OpenClose.TextColor3 = Color3.fromRGB(255, 255, 255)
+OpenClose.TextSize = 14.000
+
+UICorner_2.Parent = OpenClose
+
+local function NERMBF_fake_script() -- OpenClose.LocalScript 
+	local script = Instance.new('LocalScript', OpenClose)
+
+	local frame = script.Parent.Parent.Main
+	
+	script.Parent.MouseButton1Click:Connect(function()
+		frame.Visible = not frame.Visible
+	end)
+end
+coroutine.wrap(NERMBF_fake_script)()
