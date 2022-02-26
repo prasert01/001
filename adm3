@@ -123,7 +123,7 @@ if game.GameId == 2655311011 then
     local SettingFolder = window:AddFolder("คั้งค่า")
     local CreditsFolder = window:AddFolder("เคร์ดิต")
 
-    FarmingFolder:AddToggle({
+    FarmingFolder:AddButton({
         text = "เปิด ออโต้ฟาร๋ม", 
         state = _G.Settings.AutoFarm,
         callback = function(a) 
