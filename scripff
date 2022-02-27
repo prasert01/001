@@ -70,7 +70,29 @@ spawn(function()
      end
  end)
  
- UICorner.Parent = Activate
+Activate.Name = "Activate"
+Activate.Parent = Main
+Activate.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Activate.BorderColor3 = Color3.fromRGB(27, 42, 53)
+Activate.BorderSizePixel = 0
+Activate.Position = UDim2.new(0.0330629945, 0, 0.243326917, 0)
+Activate.Size = UDim2.new(0, 274, 0, 59)
+Activate.Font = Enum.Font.GothamBold
+Activate.Text = "กดเพื่อเปิดใช้งาน"
+Activate.TextColor3 = Color3.fromRGB(0, 255, 127)
+Activate.TextSize = 43.000
+Activate.TextStrokeColor3 = Color3.fromRGB(102, 255, 115)
+Activate.MouseButton1Down:connect(function()
+	local vu = game:GetService("VirtualUser")
+	game:GetService("Players").LocalPlayer.Idled:connect(function()
+		vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+		wait(1)
+		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	end)
+end)
+
+
+UICorner.Parent = Activate
 
 OpenClose.Name = "Open/Close"
 OpenClose.Parent = Rice
