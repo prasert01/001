@@ -1,0 +1,38 @@
+local VirtualUser = game:GetService("VirtualUser")
+local player = game.Players.LocalPlayer
+_G.Enabled = true
+
+while _G.Enabled do
+game:service'RunService'.Stepped:Connect(function()
+        if player.Character and player.Character:FindFirstChildOfClass("Humanoid") then
+            player.Character.Humanoid:ChangeState(11)
+        end
+    end)
+for _, v in pairs(game:GetService("Players"):GetPlayers()) do
+    if v.Name ~= player.Name then
+if v.Character:FindFirstChild("Head") then
+           v.Character.Head.CanCollide = false
+           v.Character.Head.Anchored = true
+           v.Character.Head.CFrame = player.Character.HumanoidRootPart.CFrame + Vector3.new(3,0,0)
+VirtualUser:CaptureController()
+   VirtualUser:ClickButton1(Vector2.new(0, 0), CFrame.new(Vector3.new(0, 0, 0)))
+keypress(0x45)
+keyrelease(0x45)
+end
+end
+end
+
+for _,v in pairs(game.Workspace.soulPartsFolder:GetChildren()) do
+if v.Name == "soulPart" then
+if v.collectPlayers:FindFirstChild(player.Name) then
+if v:FindFirstChild("isGoodKarma") then
+   player.Character.HumanoidRootPart.CFrame = v.CFrame
+keypress(0x45)
+               keyrelease(0x45)
+print("Bad Karma")
+end
+end
+end
+end
+wait(.5)
+end
