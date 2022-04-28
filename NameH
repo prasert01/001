@@ -1,6 +1,7 @@
 for _,m in pairs(game:GetService("Workspace"):GetDescendants()) do
 if m.ClassName == "TextLabel" then 
-if m.Text == game:GetService("Players").LocalPlayer.Name then
+if m.Text == game.Players.LocalPlayer.Character.Head.PlayerHealthBarGui:Destroy()
+game:GetService("StarterGui"):SetCoreGuiEnabled(Enum.CoreGuiType.PlayerList, true)
 m:Destroy()
 for j,m in pairs(game:GetService("Players").LocalPlayer:GetDescendants()) do
 if m.ClassName == "TextLabel" then 
